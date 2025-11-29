@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organ Transplant Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        .card-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .list-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .list-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .list-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .list-item strong {
+            color: #667eea;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .close-btn {
+            float: right;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            max-width: 400px;
+        }
+
+        .notification {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            animation: slideInRight 0.3s ease;
+            border-left: 5px solid #667eea;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification.success {
+            border-left-color: #28a745;
+        }
+
+        .notification.error {
+            border-left-color: #dc3545;
+        }
+
+        .notification.info {
+            border-left-color: #17a2b8;
+        }
+
+        .notification-icon {
+            font-size: 1.5em;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .notification-message {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        .hospital-graph {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .graph-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .graph-cell {
+            flex: 1;
+            padding: 8px;
+            background: white;
+            border-radius: 5px;
+            text-align: center;
+            border: 2px solid #ddd;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🫀 Organ Transplant Management System</h1>
+            <p class="subtitle">Connecting Life Savers with Lives in Need</p>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="donorCount">0</div>
+                <div class="stat-label">Total Donors</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="patientCount">0</div>
+                <div class="stat-label">Total Patients</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="matchCount">0</div>
+                <div class="stat-label">Successful Matches</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="hospitalCount">0</div>
+                <div class="stat-label">Hospitals</div>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <div class="card">
+                <h2 class="card-title">🏥 Hospital Network</h2>
+                <button type="button" class="btn" onclick="openModal('hospitalModal')">Setup Hospital Graph</button>
+                <div id="hospitalGraphDisplay"></div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">❤️ Donor Management</h2>
+                <button type="button" class="btn" onclick="openModal('donorModal')">Add New Donor</button>
+                <button type="button" class="btn btn-secondary" onclick="showDonors()">View All Donors</button>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">🩺 Patient Management</h2>
+                <button type="button" class="btn" onclick="openModal('patientModal')">Add New Patient</button>
+                <button type="button" class="btn btn-secondary" onclick="showPatients()">View All Patients</button>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">🔄 Matching System</h2>
+                <button type="button" class="btn btn-success" onclick="performMatching()">Run Matching Algorithm</button>
+                <button type="button" class="btn btn-secondary" onclick="showHistory()">View Transplant History</button>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">🔧 System Actions</h2>
+                <button type="button" class="btn" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);" onclick="openModal('resetModal')">🗑️ Reset All Data</button>
+                <button type="button" class="btn btn-secondary" onclick="exportData()">💾 Export Data</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title">📊 System Display</h2>
+            <div id="displayArea" class="list-container">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📋</div>
+                    <p>Select an option above to view data</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hospital Modal -->
+    <div id="hospitalModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('hospitalModal')">&times;</span>
+            <h2 class="card-title">Setup Hospital Network</h2>
+            <div class="input-group">
+                <label>Number of Hospitals:</label>
+                <input type="number" id="numHospitals" min="2" max="10" value="3">
+            </div>
+            <button class="btn" onclick="generateHospitalInputs()">Generate Matrix</button>
+            <div id="hospitalInputs"></div>
+        </div>
+    </div>
+
+    <!-- Donor Modal -->
+    <div id="donorModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('donorModal')">&times;</span>
+            <h2 class="card-title">Add New Donor</h2>
+            <form onsubmit="addDonor(event)">
+                <div class="input-group">
+                    <label>Donor Name:</label>
+                    <input type="text" id="donorName" required>
+                </div>
+                <div class="input-group">
+                    <label>Blood Group:</label>
+                    <select id="donorBlood" required>
+                        <option value="O-">O-</option>
+                        <option value="O+">O+</option>
+                        <option value="A-">A-</option>
+                        <option value="A+">A+</option>
+                        <option value="B-">B-</option>
+                        <option value="B+">B+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="AB+">AB+</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Organ:</label>
+                    <select id="donorOrgan" required>
+                        <option value="Heart">Heart</option>
+                        <option value="Kidney">Kidney</option>
+                        <option value="Liver">Liver</option>
+                        <option value="Lung">Lung</option>
+                        <option value="Pancreas">Pancreas</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Expiry Time (hours):</label>
+                    <input type="number" id="donorExpiry" min="1" required>
+                </div>
+                <div class="input-group">
+                    <label>Hospital ID:</label>
+                    <input type="number" id="donorHospital" min="0" required>
+                </div>
+                <button type="submit" class="btn">Add Donor</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Patient Modal -->
+    <div id="patientModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('patientModal')">&times;</span>
+            <h2 class="card-title">Add New Patient</h2>
+            <form onsubmit="addPatient(event)">
+                <div class="input-group">
+                    <label>Patient Name:</label>
+                    <input type="text" id="patientName" required>
+                </div>
+                <div class="input-group">
+                    <label>Blood Group:</label>
+                    <select id="patientBlood" required>
+                        <option value="O-">O-</option>
+                        <option value="O+">O+</option>
+                        <option value="A-">A-</option>
+                        <option value="A+">A+</option>
+                        <option value="B-">B-</option>
+                        <option value="B+">B+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="AB+">AB+</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Organ Needed:</label>
+                    <select id="patientOrgan" required>
+                        <option value="Heart">Heart</option>
+                        <option value="Kidney">Kidney</option>
+                        <option value="Liver">Liver</option>
+                        <option value="Lung">Lung</option>
+                        <option value="Pancreas">Pancreas</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Urgency Level (1-10, higher=more urgent):</label>
+                    <input type="number" id="patientUrgency" min="1" max="10" required>
+                </div>
+                <div class="input-group">
+                    <label>Hospital ID:</label>
+                    <input type="number" id="patientHospital" min="0" required>
+                </div>
+                <button type="submit" class="btn">Add Patient</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <!-- Reset Confirmation Modal -->
+    <div id="resetModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('resetModal')">&times;</span>
+            <h2 class="card-title" style="color: #dc3545;">⚠️ Reset All Data</h2>
+            <p style="margin: 20px 0; color: #666; line-height: 1.6;">
+                This will permanently delete all data including:
+            </p>
+            <ul style="margin: 20px 0; color: #666; line-height: 2;">
+                <li>🏥 Hospital network configuration</li>
+                <li>❤️ All registered donors</li>
+                <li>🩺 All registered patients</li>
+                <li>📋 Complete transplant history</li>
+            </ul>
+            <p style="margin: 20px 0; color: #dc3545; font-weight: 600;">
+                This action cannot be undone!
+            </p>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="button" class="btn" style="background: #6c757d;" onclick="closeModal('resetModal')">Cancel</button>
+                <button type="button" class="btn" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);" onclick="resetAllData()">Yes, Reset Everything</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data storage
+        let donors = [];
+        let patients = [];
+        let history = [];
+        let hospitalGraph = { numHospitals: 0, adjMatrix: [] };
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Notification system
+        function showNotification(title, message, type = 'info') {
+            const container = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            
+            const icons = {
+                success: '✅',
+                error: '❌',
+                info: 'ℹ️',
+                warning: '⚠️'
+            };
+
+            notification.innerHTML = `
+                <div class="notification-icon">${icons[type]}</div>
+                <div class="notification-content">
+                    <div class="notification-title">${title}</div>
+                    <div class="notification-message">${message}</div>
+                </div>
+            `;
+
+            container.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideInRight 0.3s ease reverse';
+                setTimeout(() => notification.remove(), 300);
+            }, 4000);
+        }
+
+        // Hospital graph functions
+        function generateHospitalInputs() {
+            const num = parseInt(document.getElementById('numHospitals').value);
+            const container = document.getElementById('hospitalInputs');
+            
+            let html = '<h3 style="margin: 20px 0;">Enter Travel Times (hours)</h3>';
+            
+            for (let i = 0; i < num; i++) {
+                for (let j = 0; j < num; j++) {
+                    if (i !== j) {
+                        html += `
+                            <div class="input-group">
+                                <label>Hospital ${i} → Hospital ${j}:</label>
+                                <input type="number" id="dist_${i}_${j}" min="0" value="9999" placeholder="9999 = no path">
+                            </div>
+                        `;
+                    }
+                }
+            }
+            
+            html += '<button type="button" class="btn" onclick="saveHospitalGraph()">Save Hospital Graph</button>';
+            container.innerHTML = html;
+        }
+
+        function saveHospitalGraph() {
+            const num = parseInt(document.getElementById('numHospitals').value);
+            const matrix = [];
+            
+            for (let i = 0; i < num; i++) {
+                matrix[i] = [];
+                for (let j = 0; j < num; j++) {
+                    if (i === j) {
+                        matrix[i][j] = 0;
+                    } else {
+                        const input = document.getElementById(`dist_${i}_${j}`);
+                        matrix[i][j] = parseInt(input.value);
+                    }
+                }
+            }
+            
+            hospitalGraph = { numHospitals: num, adjMatrix: matrix };
+            document.getElementById('hospitalCount').textContent = num;
+            
+            displayHospitalGraph();
+            closeModal('hospitalModal');
+            showNotification('Success', `Hospital network with ${num} hospitals configured`, 'success');
+        }
+
+        function displayHospitalGraph() {
+            const container = document.getElementById('hospitalGraphDisplay');
+            if (hospitalGraph.numHospitals === 0) {
+                container.innerHTML = '<p style="margin-top: 15px; color: #999;">No hospital graph configured</p>';
+                return;
+            }
+            
+            let html = '<div class="hospital-graph"><h4>Network Matrix</h4>';
+            for (let i = 0; i < hospitalGraph.numHospitals; i++) {
+                html += '<div class="graph-row">';
+                for (let j = 0; j < hospitalGraph.numHospitals; j++) {
+                    const val = hospitalGraph.adjMatrix[i][j];
+                    html += `<div class="graph-cell">${val === 9999 ? '∞' : val}</div>`;
+                }
+                html += '</div>';
+            }
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // Donor functions
+        function addDonor(event) {
+            event.preventDefault();
+            
+            const donor = {
+                name: document.getElementById('donorName').value,
+                bloodGroup: document.getElementById('donorBlood').value,
+                organ: document.getElementById('donorOrgan').value,
+                expiryTime: parseInt(document.getElementById('donorExpiry').value),
+                hospitalId: parseInt(document.getElementById('donorHospital').value)
+            };
+            
+            donors.push(donor);
+            document.getElementById('donorCount').textContent = donors.length;
+            
+            closeModal('donorModal');
+            event.target.reset();
+            
+            showNotification(
+                'Donor Added',
+                `${donor.name} registered as ${donor.organ} donor (${donor.bloodGroup})`,
+                'success'
+            );
+        }
+
+        // Patient functions
+        function addPatient(event) {
+            event.preventDefault();
+            
+            const patient = {
+                name: document.getElementById('patientName').value,
+                bloodGroup: document.getElementById('patientBlood').value,
+                organNeeded: document.getElementById('patientOrgan').value,
+                urgencyLevel: parseInt(document.getElementById('patientUrgency').value),
+                hospitalId: parseInt(document.getElementById('patientHospital').value)
+            };
+            
+            patients.push(patient);
+            document.getElementById('patientCount').textContent = patients.length;
+            
+            closeModal('patientModal');
+            event.target.reset();
+            
+            showNotification(
+                'Patient Added',
+                `${patient.name} added to waitlist for ${patient.organNeeded} (Urgency: ${patient.urgencyLevel})`,
+                'info'
+            );
+        }
+
+        // Display functions
+        function showDonors() {
+            console.log('showDonors called, donors count:', donors.length);
+            const display = document.getElementById('displayArea');
+            
+            if (donors.length === 0) {
+                display.innerHTML = '<div class="empty-state"><div class="empty-state-icon">❤️</div><p>No donors registered yet</p><p style="margin-top: 10px; color: #666;">Click "Add New Donor" to register a donor</p></div>';
+                showNotification('No Donors', 'Please add donors first', 'info');
+                return;
+            }
+            
+            let html = '<h3 style="margin-bottom: 15px;">Registered Donors</h3>';
+            donors.forEach((donor, index) => {
+                html += `
+                    <div class="list-item">
+                        <strong>${index + 1}. ${donor.name}</strong><br>
+                        Blood: ${donor.bloodGroup} | Organ: ${donor.organ}<br>
+                        Expiry: ${donor.expiryTime}h | Hospital: ${donor.hospitalId}
+                    </div>
+                `;
+            });
+            
+            display.innerHTML = html;
+            showNotification('Donors Loaded', `Showing ${donors.length} donor(s)`, 'success');
+        }
+
+        function showPatients() {
+            console.log('showPatients called, patients count:', patients.length);
+            const display = document.getElementById('displayArea');
+            
+            if (patients.length === 0) {
+                display.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🩺</div><p>No patients registered yet</p><p style="margin-top: 10px; color: #666;">Click "Add New Patient" to register a patient</p></div>';
+                showNotification('No Patients', 'Please add patients first', 'info');
+                return;
+            }
+            
+            let html = '<h3 style="margin-bottom: 15px;">Registered Patients</h3>';
+            patients.forEach((patient, index) => {
+                html += `
+                    <div class="list-item">
+                        <strong>${index + 1}. ${patient.name}</strong><br>
+                        Blood: ${patient.bloodGroup} | Organ Needed: ${patient.organNeeded}<br>
+                        Urgency: ${patient.urgencyLevel} | Hospital: ${patient.hospitalId}
+                    </div>
+                `;
+            });
+            
+            display.innerHTML = html;
+            showNotification('Patients Loaded', `Showing ${patients.length} patient(s)`, 'success');
+        }
+
+        function showHistory() {
+            console.log('showHistory called, history count:', history.length);
+            const display = document.getElementById('displayArea');
+            
+            if (history.length === 0) {
+                display.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><p>No transplant history yet</p><p style="margin-top: 10px; color: #666;">Run the matching algorithm to create matches</p></div>';
+                showNotification('No History', 'No transplants recorded yet', 'info');
+                return;
+            }
+            
+            let html = '<h3 style="margin-bottom: 15px;">Transplant History</h3>';
+            history.forEach((entry, index) => {
+                html += `
+                    <div class="list-item">
+                        <strong>${index + 1}. ${entry.organ} Transplant</strong><br>
+                        Donor: ${entry.donorName} → Patient: ${entry.patientName}
+                    </div>
+                `;
+            });
+            
+            display.innerHTML = html;
+            showNotification('History Loaded', `Showing ${history.length} transplant(s)`, 'success');
+        }
+
+        // Dijkstra's algorithm
+        function dijkstra(src) {
+            const n = hospitalGraph.numHospitals;
+            const dist = new Array(n).fill(9999);
+            const visited = new Array(n).fill(false);
+            
+            for (let i = 0; i < n; i++) {
+                dist[i] = hospitalGraph.adjMatrix[src][i];
+            }
+            dist[src] = 0;
+            visited[src] = true;
+            
+            for (let count = 1; count < n; count++) {
+                let minDist = 9999;
+                let u = -1;
+                
+                for (let i = 0; i < n; i++) {
+                    if (!visited[i] && dist[i] < minDist) {
+                        minDist = dist[i];
+                        u = i;
+                    }
+                }
+                
+                if (u === -1) break;
+                visited[u] = true;
+                
+                for (let v = 0; v < n; v++) {
+                    if (!visited[v] && hospitalGraph.adjMatrix[u][v] !== 9999) {
+                        if (dist[u] + hospitalGraph.adjMatrix[u][v] < dist[v]) {
+                            dist[v] = dist[u] + hospitalGraph.adjMatrix[u][v];
+                        }
+                    }
+                }
+            }
+            
+            return dist;
+        }
+
+        // Blood compatibility check
+        function checkBloodCompatibility(donorBlood, patientBlood) {
+            if (donorBlood === 'O-') return true; // Universal donor
+            if (donorBlood === patientBlood) return true;
+            return false;
+        }
+
+        // Get maximum viable time for organ type (in hours)
+        function getOrganViabilityTime(organType) {
+            const viabilityTimes = {
+                'Heart': 4,      // 4-6 hours
+                'Lung': 6,       // 4-6 hours
+                'Liver': 12,     // 12-15 hours
+                'Kidney': 24,    // 24-36 hours
+                'Pancreas': 12   // 12-24 hours
+            };
+            return viabilityTimes[organType] || 12; // Default 12 hours
+        }
+
+        // Matching algorithm
+        function performMatching() {
+            console.log('=== MATCHING STARTED ===');
+            console.log('Hospital graph:', hospitalGraph);
+            console.log('Donors count:', donors.length);
+            console.log('Patients count:', patients.length);
+            
+            const display = document.getElementById('displayArea');
+            
+            if (hospitalGraph.numHospitals === 0) {
+                display.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🏥</div><p>Hospital network not configured</p><p style="margin-top: 10px; color: #666;">Please setup the hospital graph first</p></div>';
+                showNotification('Setup Required', 'Please setup hospital network first', 'error');
+                return;
+            }
+            
+            if (donors.length === 0) {
+                display.innerHTML = '<div class="empty-state"><div class="empty-state-icon">❤️</div><p>No donors available</p><p style="margin-top: 10px; color: #666;">Please add at least one donor</p></div>';
+                showNotification('No Donors', 'Please add donors before matching', 'error');
+                return;
+            }
+            
+            if (patients.length === 0) {
+                display.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🩺</div><p>No patients waiting</p><p style="margin-top: 10px; color: #666;">Please add at least one patient</p></div>';
+                showNotification('No Patients', 'Please add patients before matching', 'error');
+                return;
+            }
+            
+            // Show processing message
+            display.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⏳</div><p>Processing matches...</p></div>';
+            
+            // Track which patients have been matched
+            const matchedPatients = new Set();
+            
+            let matchResults = '<h3 style="margin-bottom: 15px;">Matching Results</h3>';
+            let matchesFound = 0;
+            
+            donors.forEach((donor, donorIdx) => {
+                console.log(`\n--- Processing Donor ${donorIdx + 1}: ${donor.name} ---`);
+                console.log(`Organ: ${donor.organ}, Blood: ${donor.bloodGroup}, Hospital: ${donor.hospitalId}, Expiry: ${donor.expiryTime}h`);
+                
+                const organViability = getOrganViabilityTime(donor.organ);
+                const effectiveExpiry = Math.min(donor.expiryTime, organViability);
+                console.log(`Organ viability limit: ${organViability}h, Effective expiry: ${effectiveExpiry}h`);
+                
+                const dist = dijkstra(donor.hospitalId);
+                console.log('Distances from hospital', donor.hospitalId, ':', dist);
+                
+                let bestPatient = -1;
+                let bestScore = -1;
+                let bestPatientInfo = null;
+                
+                patients.forEach((patient, j) => {
+                    // Skip if patient already matched
+                    if (matchedPatients.has(j)) {
+                        console.log(`  Patient ${j + 1} (${patient.name}) already matched, skipping`);
+                        return;
+                    }
+                    
+                    console.log(`\n  Evaluating Patient ${j + 1}: ${patient.name}`);
+                    console.log(`    Organ needed: ${patient.organNeeded}, Blood: ${patient.bloodGroup}`);
+                    console.log(`    Urgency: ${patient.urgencyLevel}, Hospital: ${patient.hospitalId}`);
+                    
+                    // Check organ and blood compatibility
+                    if (donor.organ === patient.organNeeded &&
+                        checkBloodCompatibility(donor.bloodGroup, patient.bloodGroup)) {
+                        
+                        const travelTime = dist[patient.hospitalId];
+                        console.log(`    Travel time: ${travelTime}h`);
+                        console.log(`    Donor expiry: ${donor.expiryTime}h, Organ viability: ${organViability}h`);
+                        console.log(`    Effective expiry: ${effectiveExpiry}h`);
+                        
+                        if (travelTime <= effectiveExpiry) {
+                            // Calculate priority score
+                            // Higher urgency number = more urgent (9 is critical, 1 is stable)
+                            // Lower score = higher priority for matching
+                            // Formula: ((10 - urgency) * 10) + (travelTime * 0.5) + (urgencyPenalty based on time remaining)
+                            const invertedUrgency = 10 - patient.urgencyLevel;
+                            const urgencyWeight = invertedUrgency * 10;
+                            const timeWeight = travelTime * 0.5;
+                            
+                            // Add urgency penalty if cutting it close on time
+                            const timeMargin = effectiveExpiry - travelTime;
+                            const timePressurePenalty = (timeMargin < 2) ? 5 : 0; // Penalty if less than 2h margin
+                            
+                            const score = urgencyWeight + timeWeight + timePressurePenalty;
+                            
+                            console.log(`    ✓ Compatible!`);
+                            console.log(`    Original urgency: ${patient.urgencyLevel} (higher = more urgent)`);
+                            console.log(`    Inverted urgency: ${invertedUrgency}, Urgency weight: ${urgencyWeight}`);
+                            console.log(`    Time weight: ${timeWeight}`);
+                            console.log(`    Time margin: ${timeMargin}h, Time pressure penalty: ${timePressurePenalty}`);
+                            console.log(`    Total score: ${score} (lower score = higher priority)`);
+                            
+                            // Select patient with lowest score (highest priority)
+                            if (bestPatient === -1 || score < bestScore) {
+                                console.log(`    >>> New best match! (Previous best score: ${bestScore})`);
+                                bestPatient = j;
+                                bestScore = score;
+                                bestPatientInfo = {
+                                    travelTime: travelTime,
+                                    urgency: patient.urgencyLevel,
+                                    score: score,
+                                    effectiveExpiry: effectiveExpiry,
+                                    organViability: organViability,
+                                    timeMargin: timeMargin
+                                };
+                            } else {
+                                console.log(`    Current best still better (score ${bestScore} < ${score})`);
+                            }
+                        } else {
+                            console.log(`    ✗ Travel time too long (${travelTime}h > ${effectiveExpiry}h effective expiry)`);
+                        }
+                    } else {
+                        if (donor.organ !== patient.organNeeded) {
+                            console.log(`    ✗ Organ mismatch (${donor.organ} vs ${patient.organNeeded})`);
+                        }
+                        if (!checkBloodCompatibility(donor.bloodGroup, patient.bloodGroup)) {
+                            console.log(`    ✗ Blood incompatible (${donor.bloodGroup} cannot donate to ${patient.bloodGroup})`);
+                        }
+                    }
+                });
+                
+                if (bestPatient !== -1) {
+                    const patient = patients[bestPatient];
+                    console.log(`\n  ✅ FINAL MATCH: ${donor.name} → ${patient.name}`);
+                    console.log(`  Selected based on: Urgency ${bestPatientInfo.urgency}, Travel ${bestPatientInfo.travelTime}h, Score ${bestPatientInfo.score.toFixed(2)}`);
+                    console.log(`  Time margin: ${bestPatientInfo.timeMargin}h within ${bestPatientInfo.organViability}h organ viability window`);
+                    
+                    // Mark this patient as matched
+                    matchedPatients.add(bestPatient);
+                    
+                    // Determine urgency color
+                    const timeMarginColor = bestPatientInfo.timeMargin < 2 ? '#ff6b6b' : '#28a745';
+                    
+                    matchResults += `
+                        <div class="list-item" style="border-left-color: #28a745;">
+                            <strong>✅ MATCH FOUND</strong><br>
+                            Donor: ${donor.name} → Patient: ${patient.name}<br>
+                            Organ: ${donor.organ} (Max viability: ${bestPatientInfo.organViability}h) | Blood: ${donor.bloodGroup} → ${patient.bloodGroup}<br>
+                            Urgency Level: ${patient.urgencyLevel}/10 (higher = more urgent) | Travel Time: ${bestPatientInfo.travelTime}h<br>
+                            <span style="color: ${timeMarginColor}; font-size: 0.85em;">
+                                Time Margin: ${bestPatientInfo.timeMargin}h remaining
+                                ${bestPatientInfo.timeMargin < 2 ? ' ⚠️ URGENT - Tight window!' : ' ✓ Safe delivery window'}
+                            </span>
+                        </div>
+                    `;
+                    
+                    history.push({
+                        donorName: donor.name,
+                        patientName: patient.name,
+                        organ: donor.organ
+                    });
+                    
+                    matchesFound++;
+                    
+                    showNotification(
+                        'Match Found! 🎉',
+                        `${donor.name}'s ${donor.organ} → ${patient.name} (Urgency: ${patient.urgencyLevel}, Travel: ${bestPatientInfo.travelTime}h)`,
+                        'success'
+                    );
+                } else {
+                    console.log(`\n  ❌ NO MATCH for ${donor.name}`);
+                    matchResults += `
+                        <div class="list-item" style="border-left-color: #dc3545;">
+                            <strong>❌ NO MATCH</strong><br>
+                            Donor: ${donor.name} (${donor.organ}, ${donor.bloodGroup})<br>
+                            Hospital: ${donor.hospitalId} | Expiry: ${donor.expiryTime}h<br>
+                            <span style="color: #666; font-size: 0.9em;">No compatible patient available within time/distance constraints</span>
+                        </div>
+                    `;
+                }
+            });
+            
+            // Show unmatched patients
+            const unmatchedPatients = patients.filter((_, idx) => !matchedPatients.has(idx));
+            if (unmatchedPatients.length > 0) {
+                matchResults += '<h3 style="margin: 20px 0 15px 0; color: #ff6b6b;">⏳ Unmatched Patients (Still Waiting)</h3>';
+                unmatchedPatients.forEach((patient) => {
+                    matchResults += `
+                        <div class="list-item" style="border-left-color: #ffa502;">
+                            <strong>⏳ WAITING</strong><br>
+                            Patient: ${patient.name}<br>
+                            Needs: ${patient.organNeeded} (${patient.bloodGroup}) | Urgency Level: ${patient.urgencyLevel} | Hospital: ${patient.hospitalId}<br>
+                            <span style="color: #666; font-size: 0.9em;">No compatible donor available with matching organ/blood type within delivery time</span>
+                        </div>
+                    `;
+                });
+            }
+            
+            document.getElementById('matchCount').textContent = history.length;
+            display.innerHTML = matchResults;
+            
+            console.log(`\n=== MATCHING COMPLETE ===`);
+            console.log(`Total matches: ${matchesFound}`);
+            console.log(`Matched patients: ${matchedPatients.size}`);
+            console.log(`Unmatched patients: ${unmatchedPatients.length}`);
+            
+            if (matchesFound > 0) {
+                showNotification(
+                    'Matching Complete ✓',
+                    `${matchesFound} match(es) found from ${donors.length} donor(s). ${unmatchedPatients.length} patient(s) still waiting.`,
+                    'success'
+                );
+            } else {
+                showNotification(
+                    'No Matches Found',
+                    'No compatible matches found. Check blood types, organs, and travel times.',
+                    'warning'
+                );
+            }
+        }
+
+        // Initialize display
+        displayHospitalGraph();
+
+        // Reset function
+        function resetAllData() {
+            console.log('Resetting all data...');
+            
+            // Clear all data
+            donors = [];
+            patients = [];
+            history = [];
+            hospitalGraph = { numHospitals: 0, adjMatrix: [] };
+            
+            // Update statistics
+            document.getElementById('donorCount').textContent = '0';
+            document.getElementById('patientCount').textContent = '0';
+            document.getElementById('matchCount').textContent = '0';
+            document.getElementById('hospitalCount').textContent = '0';
+            
+            // Clear display
+            document.getElementById('displayArea').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">🔄</div>
+                    <p>System Reset Complete</p>
+                    <p style="margin-top: 10px; color: #666;">All data has been cleared. You can start fresh now.</p>
+                </div>
+            `;
+            
+            // Clear hospital graph display
+            displayHospitalGraph();
+            
+            // Close modal
+            closeModal('resetModal');
+            
+            // Show success notification
+            showNotification(
+                'System Reset ✓',
+                'All data has been cleared successfully',
+                'success'
+            );
+            
+            console.log('Reset complete');
+        }
+
+        // Export data function
+        function exportData() {
+            const data = {
+                hospitalGraph: hospitalGraph,
+                donors: donors,
+                patients: patients,
+                history: history,
+                exportDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `organ_transplant_data_${Date.now()}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            showNotification(
+                'Data Exported ✓',
+                'Your data has been downloaded as JSON file',
+                'success'
+            );
+        }
+    </script>
+</body>
+</html>
